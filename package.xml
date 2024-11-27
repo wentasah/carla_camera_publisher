@@ -3,11 +3,13 @@
 <package format="3">
   <name>carla_camera_publisher</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
-  <maintainer email="michal.sojka@cvut.cz">wsh</maintainer>
+  <description>Publish camera images from CARLA via ROS image transport</description>
+  <maintainer email="michal.sojka@cvut.cz">Michal Sojka</maintainer>
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>image_transport</depend>
   <build_depend>fmt</build_depend>
   <build_depend>libcarla-client</build_depend>
   <build_depend>libjpeg</build_depend>

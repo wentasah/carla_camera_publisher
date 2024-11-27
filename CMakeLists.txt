@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.8)
 project(carla_camera_publisher)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
+#set(CMAKE_BUILD_TYPE Debug)
+
+#set(CMAKE_CXX_COMPILER clang++)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -10,21 +13,27 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(fmt REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(image_transport REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(carla_camera_publisher main.cpp)
+add_executable(carla_camera_publisher main.cpp ros.cpp)
 set_property(TARGET carla_camera_publisher PROPERTY CXX_STANDARD 20)
-target_link_libraries(carla_camera_publisher PRIVATE fmt::fmt)
+target_link_libraries(carla_camera_publisher fmt::fmt)
 # target_compile_options(carla_camera_publisher PUBLIC -fPIC -fsanitize=thread)
 # target_link_options(carla_camera_publisher PUBLIC -fsanitize=thread)
 # target_link_libraries(carla_camera_publisher PUBLIC Threads::Threads)
-target_link_libraries(carla_camera_publisher PUBLIC
+target_link_libraries(carla_camera_publisher
   -Wl,-Bstatic -lcarla_client -lrpc -Wl,-Bdynamic -lpng
   -ljpeg -lRecast -lDetour -lDetourCrowd -lboost_filesystem
   )
+ament_target_dependencies(carla_camera_publisher rclcpp image_transport)
 
+install(TARGETS
+  carla_camera_publisher
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
