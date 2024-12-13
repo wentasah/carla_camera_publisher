@@ -47,9 +47,9 @@ static auto &RandomChoice(const RangeT &range, RNG &&generator) {
 }
 
 static auto ParseArguments(int argc, const char *argv[]) {
-    EXPECT_TRUE((argc == 1u) || (argc == 3u));
+    EXPECT_TRUE((argc == 1) || (argc >= 3));
     using ResultType = std::tuple<std::string, uint16_t>;
-    return argc == 3u ?
+    return argc >= 3 ?
         ResultType{argv[1u], std::stoi(argv[2u])} :
         ResultType{"localhost", 2000u};
 }

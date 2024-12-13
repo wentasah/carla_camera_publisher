@@ -8,10 +8,15 @@
 
 #include "ros.hpp"
 
+using rcl_interfaces::msg::ParameterDescriptor;
+
 class CameraPublisher : public rclcpp::Node
 {
 public:
     CameraPublisher() : rclcpp::Node("carla_camera_publisher") {
+        this->declare_parameter(
+            "topic", "/sensor_stack/cameras/zed2/zed_node/left/image_rect_color",
+            ParameterDescriptor{}.set__description("Topic where to publish camera images"));
     }
 private:
 };
@@ -29,8 +34,9 @@ void ros_init(int argc, const char *argv[])
     {
         std::lock_guard guard(mutex);
         img_transport = new image_transport::ImageTransport(node);
-        camera_publisher = img_transport->advertiseCamera(
-            "/sensor_stack/cameras/zed2/zed_node/left/image_rect_color", 1);
+        auto topic = node->get_parameter("topic").as_string();
+        fmt::println("Publishing camera as {}", topic);
+        camera_publisher = img_transport->advertiseCamera(topic, 1);
     }
 }
 
