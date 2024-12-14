@@ -22,8 +22,10 @@ Run the node as follows:
 
     ros2 run carla_camera_publisher carla_camera_publisher $CARLA_HOST $CARLA_PORT --ros-args -p topic:=/my_camera
 
-This will publish the following topics (their number and names can
-differ depending on image_transport plugins you have available):
+The node will wait for the ego vehicle, creates a camera sensors and
+starts publishing images from the camera on the following topics
+(their number and names can differ depending on image_transport
+plugins you have available):
 
     /my_camera
     /my_camera/compressed
@@ -32,3 +34,8 @@ differ depending on image_transport plugins you have available):
     /my_camera/foxglove
     /my_camera/theora
     /my_camera/zstd
+
+When the ego vehicle is respawned or the CARLA server is restarted,
+the node tries to reconnect the server and recreate the camera sensor.
+Currently, this can fail in some situations and manual restart of the
+node is needed.
