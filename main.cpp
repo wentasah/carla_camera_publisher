@@ -36,6 +36,8 @@ namespace csd = carla::sensor::data;
 using namespace std::chrono_literals;
 using namespace std::string_literals;
 
+using std::to_string;
+
 #define EXPECT_TRUE(pred) if (!(pred)) { throw std::runtime_error(#pred); }
 
 /// Pick a random element from @a range.
@@ -58,6 +60,8 @@ int main(int argc, const char *argv[])
 {
     try {
         ros_init(argc, argv);
+
+        Params params = ros_has_new_params().value();
 
         // Run ROS in a separate thread
         std::atomic<bool> ros_running = true;
@@ -97,7 +101,7 @@ int main(int argc, const char *argv[])
             boost::shared_ptr<cc::Actor> ego_vehicle;
             auto episode = client.GetCurrentEpisode().GetId();
             while (!ego_vehicle) {
-                fmt::println("Waiting for the ego vehicle...");
+                fmt::println("Waiting for the ego vehicle with role {}...", params.ego_vehicle_role_name);
                 if (episode != client.GetCurrentEpisode().GetId()) {
                     fmt::println(stderr, "Episode changed. Reconnecting...");
                     goto reconnect;
@@ -108,7 +112,7 @@ int main(int argc, const char *argv[])
                         fmt::println("Found actor: {}", actor->GetDisplayId());
                         for (auto attr : actor->GetAttributes()) {
                             fmt::println("  {}: {}", attr.GetId(), attr.GetValue());
-                            if (attr.GetId() == "role_name" && attr.GetValue() == "ego_vehicle")
+                            if (attr.GetId() == "role_name" && attr.GetValue() == params.ego_vehicle_role_name)
                                 ego_vehicle = actor;
                         }
                         vehicles.insert(actor->GetDisplayId());
@@ -122,21 +126,22 @@ int main(int argc, const char *argv[])
             }
             fmt::println("Found ego_vehicle: {}", ego_vehicle->GetDisplayId());
 
+        create_camera:
             // Find a camera blueprint.
             auto blueprint_library = world.GetBlueprintLibrary();
             auto camera_bp = blueprint_library->Find("sensor.camera.rgb");
             EXPECT_TRUE(camera_bp != nullptr);
-            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("image_size_x")).Set("640");
-            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("image_size_y")).Set("360");
-            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("fov")).Set("110");
-            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("sensor_tick")).Set(std::to_string(1.0/25.0));
+            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("image_size_x")).Set(to_string(params.width));
+            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("image_size_y")).Set(to_string(params.height));
+            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("fov")).Set(to_string(params.fov));
+            const_cast<cc::ActorAttribute &>(camera_bp->GetAttribute("sensor_tick")).Set(to_string(params.sensor_tick));
             for (auto &attr : *camera_bp)
                 fmt::println("  {}: {}", attr.GetId(), attr.GetValue());
 
             // Spawn a camera attached to the vehicle.
-            auto camera_transform =
-                cg::Transform{cg::Location{0.485f, 0.0506f, 1.5472f}, // x, y, z.
-                cg::Rotation{-12.0f, 0.0f, 0.0f}}; // pitch, yaw, roll.
+            auto camera_transform = cg::Transform {
+                cg::Location{params.position[0], params.position[1], params.position[2]}, // x, y, z.
+                cg::Rotation{params.orientation[0], params.orientation[1], params.orientation[2]} }; // pitch, yaw, roll.
             auto cam_actor = world.SpawnActor(*camera_bp, camera_transform, ego_vehicle.get());
             auto camera = boost::static_pointer_cast<cc::Sensor>(cam_actor);
 
@@ -154,9 +159,11 @@ int main(int argc, const char *argv[])
             });
 
             client.SetTimeout(5s);
-            while (ros_running && ego_vehicle->IsActive()) {
+            std::optional<Params> new_params;
+            while (ros_running && ego_vehicle->IsActive() && !new_params) {
                 client.GetServerVersion(); // throws exception if the server dies
                 sleep(1);
+                new_params = ros_has_new_params();
             }
             fmt::println(stderr, "Loop exit");
 
@@ -166,6 +173,10 @@ int main(int argc, const char *argv[])
             if (!ego_vehicle->IsActive()) {
                 fmt::println(stderr, "Ego vehicle is inactive. Reconnecting...");
                 goto reconnect;
+            }
+            if (new_params) {
+                params = new_params.value();
+                goto create_camera;
             }
         } catch (const cc::TimeoutException &e) {
             fmt::println("{}", e.what());
