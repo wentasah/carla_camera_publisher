@@ -14,6 +14,8 @@
   <build_depend>libcarla-client</build_depend>
   <build_depend>libjpeg</build_depend>
   <build_depend>libpng</build_depend>
+  <build_depend>tf2</build_depend>
+  <build_depend>tf2_ros</build_depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

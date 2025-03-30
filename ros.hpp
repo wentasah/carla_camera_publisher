@@ -1,6 +1,7 @@
 #include <cstdint>
 #include <optional>
 #include <string>
+#include <array>
 
 struct Params {
         unsigned width;
@@ -8,11 +9,11 @@ struct Params {
         float fov;
         float sensor_tick;
 	std::string ego_vehicle_role_name;
-        float position[3];
-        float orientation[3];
+        std::array<float, 3> position;
+        std::array<float, 3> orientation;
 };
 
 void ros_init(int argc, const char *argv[]);
 void ros_run();
-void ros_publish(double stamp, uint32_t w, uint32_t h, double fov, void *data);
+void ros_publish(double stamp, uint32_t w, uint32_t h, double fov, void *data, const Params &params);
 std::optional<Params> ros_has_new_params();

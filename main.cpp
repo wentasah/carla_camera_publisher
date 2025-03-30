@@ -146,7 +146,7 @@ int main(int argc, const char *argv[])
             auto camera = boost::static_pointer_cast<cc::Sensor>(cam_actor);
 
             // Register a callback to save images to disk.
-            camera->Listen([](auto data) {
+            camera->Listen([&params](auto data) {
                 boost::shared_ptr<csd::Image> image =
                     boost::static_pointer_cast<csd::Image>(data);
                 EXPECT_TRUE(image != nullptr);
@@ -155,7 +155,8 @@ int main(int argc, const char *argv[])
                              image->GetHeight(), image->GetFOVAngle(),
                              image->GetFrame());
                 ros_publish(image->GetTimestamp(), image->GetWidth(),
-                            image->GetHeight(), image->GetFOVAngle(), image->data());
+                            image->GetHeight(), image->GetFOVAngle(),
+                            image->data(), params);
             });
 
             client.SetTimeout(5s);
@@ -170,11 +171,11 @@ int main(int argc, const char *argv[])
             // Remove actors from the simulation.
             camera->Destroy();
 
-            if (!ego_vehicle->IsActive()) {
+            if (!ego_vehicle->IsActive() && ros_running) {
                 fmt::println(stderr, "Ego vehicle is inactive. Reconnecting...");
                 goto reconnect;
             }
-            if (new_params) {
+            if (new_params && ros_running) {
                 params = new_params.value();
                 goto create_camera;
             }
@@ -186,4 +187,5 @@ int main(int argc, const char *argv[])
         fmt::println("\nException: {}", e.what());
         return 2;
     }
+    fmt::println(stderr, "Terminating");
 }

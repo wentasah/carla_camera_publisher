@@ -15,6 +15,8 @@ find_package(ament_cmake REQUIRED)
 find_package(fmt REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(image_transport REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
 # uncomment the following section in order to fill in
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
@@ -29,7 +31,7 @@ target_link_libraries(carla_camera_publisher
   -Wl,-Bstatic -lcarla_client -lrpc -Wl,-Bdynamic -lpng
   -ljpeg -lRecast -lDetour -lDetourCrowd -lboost_filesystem
   )
-ament_target_dependencies(carla_camera_publisher rclcpp image_transport)
+ament_target_dependencies(carla_camera_publisher rclcpp image_transport tf2 tf2_ros)
 
 install(TARGETS
   carla_camera_publisher
