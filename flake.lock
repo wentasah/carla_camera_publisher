@@ -1,0 +1,106 @@
+{
+  "nodes": {
+    "carla": {
+      "inputs": {
+        "nixpkgs": [
+          "nix-ros-overlay",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1742417857,
+        "narHash": "sha256-2P96CV/cSSwryzdIrwpIzip/is10jtpSwyhrucu9qT8=",
+        "owner": "CTU-IIG",
+        "repo": "carla-simulator.nix",
+        "rev": "02c77e9b4b58c5bca2590b92eebd4d9c9e1e2067",
+        "type": "github"
+      },
+      "original": {
+        "owner": "CTU-IIG",
+        "repo": "carla-simulator.nix",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "nix-ros-overlay": {
+      "inputs": {
+        "flake-utils": "flake-utils",
+        "nixpkgs": "nixpkgs"
+      },
+      "locked": {
+        "lastModified": 1743039633,
+        "narHash": "sha256-tbkpdBo5tsb4ZW1wVhe6CxcLY0jyfOAVxXsbpdygw4M=",
+        "owner": "lopsided98",
+        "repo": "nix-ros-overlay",
+        "rev": "ab3c1b3b7c3eca52614b4fe9d7c05ddded5b94b1",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lopsided98",
+        "ref": "master",
+        "repo": "nix-ros-overlay",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1739580444,
+        "narHash": "sha256-+/bSz4EAVbqz8/HsIGLroF8aNaO8bLRL7WfACN+24g4=",
+        "owner": "lopsided98",
+        "repo": "nixpkgs",
+        "rev": "8bb37161a0488b89830168b81c48aed11569cb93",
+        "type": "github"
+      },
+      "original": {
+        "owner": "lopsided98",
+        "ref": "nix-ros",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "carla": "carla",
+        "nix-ros-overlay": "nix-ros-overlay",
+        "nixpkgs": [
+          "nix-ros-overlay",
+          "nixpkgs"
+        ]
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}
