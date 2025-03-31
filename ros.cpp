@@ -15,6 +15,12 @@
 
 using rcl_interfaces::msg::ParameterDescriptor;
 
+// Protects all global variables in this file
+static std::mutex mutex;
+
+// For faster reaction to changes in the CARLA thread
+static std::condition_variable cv;
+
 class CameraPublisher : public rclcpp::Node
 {
 public:
@@ -45,9 +51,11 @@ public:
 
         param_callback_handle_ = this->add_post_set_parameters_callback(
             [this](const std::vector<rclcpp::Parameter> &) {
+              // Called by ROS - we have to synchronize with the CARLA thread
                 rcl_interfaces::msg::SetParametersResult result;
                 result.successful = true;
                 update_parameters();
+                cv.notify_one();
                 return result;
             });
     }
@@ -131,7 +139,6 @@ public:
 
 };
 
-static std::mutex mutex;
 static std::shared_ptr<CameraPublisher> node;
 static image_transport::ImageTransport *img_transport = nullptr;
 static image_transport::CameraPublisher camera_publisher;
@@ -160,6 +167,7 @@ void ros_run()
         node = nullptr;
     }
     rclcpp::shutdown();
+    cv.notify_one();
 }
 
 void ros_publish(double stamp, uint32_t w, uint32_t h, double fov, void *data, const Params &params) {
@@ -198,10 +206,17 @@ void ros_publish(double stamp, uint32_t w, uint32_t h, double fov, void *data, c
         camera_publisher.publish(image, camera_info, time);
 }
 
-std::optional<Params> ros_has_new_params()
+std::optional<Params> ros_wait_new_params(unsigned milliseconds)
 {
-    std::lock_guard guard(mutex);
+    std::unique_lock lk(mutex);
     if (!node)
         return std::nullopt;
+    if (milliseconds > 0) {
+        // TODO: Use proper conditions to not wait if notification
+        // happens outside of wait_for.
+        cv.wait_for(lk, std::chrono::milliseconds(milliseconds));
+        if (!node)
+            return std::nullopt;
+    }
     return node->has_new_params();
 }

@@ -61,7 +61,7 @@ int main(int argc, const char *argv[])
     try {
         ros_init(argc, argv);
 
-        Params params = ros_has_new_params().value();
+        Params params = ros_wait_new_params(0).value();
 
         // Run ROS in a separate thread
         std::atomic<bool> ros_running = true;
@@ -163,8 +163,7 @@ int main(int argc, const char *argv[])
             std::optional<Params> new_params;
             while (ros_running && ego_vehicle->IsActive() && !new_params) {
                 client.GetServerVersion(); // throws exception if the server dies
-                sleep(1);
-                new_params = ros_has_new_params();
+                new_params = ros_wait_new_params(1000);
             }
             fmt::println(stderr, "Loop exit");
 
