@@ -40,8 +40,10 @@
             # ... other non-ROS packages
             (with pkgs.rosPackages.${rosDistro}; buildEnv {
               paths = [
+                (callPackage ./nix/foxglove-compressed-video-transport.nix { })
+                compressed-image-transport
+                ffmpeg-image-transport
                 ros-core
-                # ... other ROS packages
               ];
             })
           ];
