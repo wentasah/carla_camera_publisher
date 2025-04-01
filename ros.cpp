@@ -1,8 +1,17 @@
 #include "image_transport/image_transport.hpp"
 #include "rcl_interfaces/msg/floating_point_range.hpp"
 #include "rclcpp/rclcpp.hpp"
+#if __has_include("tf2/LinearMath/Quaternion.hpp")
 #include "tf2/LinearMath/Quaternion.hpp"
+#else
+// Needed for ROS before https://github.com/ros2/geometry2/pull/720
+#include "tf2/LinearMath/Quaternion.h"
+#endif
+#if __has_include("tf2/LinearMath/Matrix3x3.hpp")
 #include "tf2/LinearMath/Matrix3x3.hpp"
+#else
+#include "tf2/LinearMath/Matrix3x3.h"
+#endif
 #include "tf2_ros/static_transform_broadcaster.h"
 #include <cmath>
 #include <cstdint>
