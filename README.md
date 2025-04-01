@@ -51,3 +51,8 @@ parameters give good results for me with an NVIDIA GPU:
 
 [ffmpeg_image_transport]: https://github.com/ros-misc-utilities/ffmpeg_image_transport/
 [foxglove_compressed_video_transport]: https://github.com/ros-misc-utilities/foxglove_compressed_video_transport/
+
+## Example
+
+https://github.com/user-attachments/assets/be466116-8fb5-4e0b-b9a9-a912821238a6
+
