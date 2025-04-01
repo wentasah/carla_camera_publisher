@@ -75,10 +75,12 @@ public:
         geometry_msgs::msg::TransformStamped t;
 
         if (params_for_tf.position == last_position &&
-            params_for_tf.orientation == last_orientation)
+            params_for_tf.orientation == last_orientation &&
+            stamp > last_stamp) // False if CARLA was restarted
           return;
         last_position = params_for_tf.position;
         last_orientation = params_for_tf.orientation;
+        last_stamp = stamp;
 
         t.header.stamp = stamp;
         t.header.frame_id = params.ego_vehicle_role_name;
@@ -115,6 +117,7 @@ public:
 
     std::array<float, 3> last_position = {123456};
     std::array<float, 3> last_orientation;
+    rclcpp::Time last_stamp;
 
     rclcpp::node_interfaces::PostSetParametersCallbackHandle::SharedPtr param_callback_handle_;
 
