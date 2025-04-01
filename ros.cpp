@@ -81,7 +81,7 @@ public:
         last_orientation = params_for_tf.orientation;
 
         t.header.stamp = stamp;
-        t.header.frame_id = "base_link"; //params.ego_vehicle_role_name;
+        t.header.frame_id = params.ego_vehicle_role_name;
         t.child_frame_id = frame_id;
 
         t.transform.translation.x = params_for_tf.position[0];
