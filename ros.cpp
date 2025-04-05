@@ -1,6 +1,6 @@
 #include "image_transport/image_transport.hpp"
 #include "rcl_interfaces/msg/floating_point_range.hpp"
-#include "rclcpp/rclcpp.hpp"
+#include <rclcpp/node.hpp>
 #if __has_include("tf2/LinearMath/Quaternion.hpp")
 #include "tf2/LinearMath/Quaternion.hpp"
 #else
