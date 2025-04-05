@@ -28,8 +28,25 @@
         };
         rosDistro = "jazzy";
       in {
-        legacyPackages = pkgs.rosPackages;
-        packages = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro} ;
+        apps.default = { type = "app"; program = "${self.defaultPackage.${system}}/lib/carla_camera_publisher/carla_camera_publisher"; };
+        packages = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro} // {
+          dump-parameters = pkgs.writeShellApplication {
+            name = "dump-parameters";
+            runtimeInputs = with pkgs; [
+              rosPackages.${rosDistro}.ros-core
+              yq-go
+            ];
+            text = ''
+              set -x
+              (
+                  ${self.defaultPackage.${system}}/lib/carla_camera_publisher/carla_camera_publisher > /dev/null &
+                  ros2 param dump --no-daemon /carla_camera_publisher
+                  kill $!
+                  wait
+              ) | yq eval '.["/carla_camera_publisher"].ros__parameters|omit(["carla_camera_publisher", "ffmpeg_image_transport", "qos_overrides", "use_sim_time"])'
+            '';
+          };
+        };
         defaultPackage = self.packages.${system}.carla-camera-publisher;
         checks = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro};
         devShells.default = pkgs.mkShell {

@@ -66,6 +66,31 @@ If `ros2 node list` doesn't show `carla_camera_publisher`, try running
 `ros2 daemon stop` and ensure that the ROS traffic is not blocked by a
 firewall.
 
+### ROS parameters
+
+ROS parameters and their default values are listed below:
+
+<!-- `$ nix run .#dump-parameters` as yaml -->
+
+```yaml
+ego_vehicle_role_name: ego_vehicle
+fov: 110.0
+frame_id: carla_camera
+height: 360
+orientation:
+  pitch: -10.0
+  roll: 0.0
+  yaw: 0.0
+position:
+  x: 0.0
+  y: 0.0
+  z: 2.0
+sensor_tick: 0.04
+start_type_description_service: true
+topic: /carla_camera_publisher/camera
+width: 640
+```
+
 ### Streaming to Foxglove Studio
 
 If you install [foxglove_compressed_video_transport][] (at least
