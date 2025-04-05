@@ -180,7 +180,8 @@ int main(int argc, const char *argv[])
             }
         } catch (const cc::TimeoutException &e) {
             fmt::println("{}", e.what());
-            goto reconnect;
+            if (ros_running)
+                goto reconnect;
         }
     } catch (const std::exception &e) {
         fmt::println("\nException: {}", e.what());
