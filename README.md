@@ -15,19 +15,24 @@ reduces the bandwidth.
 
 ## Features
 
+- Publishes camera images in compressed form (JPEG, h264, etc.)
 - Survives CARLA restarts, map changes and ego vehicle respawning.
 - Camera position and other parameters are modifiable at runtime via
   ROS parameters.
 - Publishes TF2 transformations to allow overlaying 3D objects over
-  the video, e.g. in Foxglove.
+  the video, e.g. in [Foxglove][].
 - Tested with CARLA 0.9.15 and 0.10.0 and ROS Jazzy Jalisco.
-- Incompatible with `rviz2` (unfortunately) until [image_transport
-  support is added](https://github.com/ros2/rviz/pull/1288).
+- Limited compatibility with `rviz2` (unfortunately). Until
+  [image_transport support is added][rviz_img_transport] `rviz2` can
+  display only uncompressed images.
+
+[Foxglove]: https://foxglove.dev/
+[rviz_img_transport]: https://github.com/ros2/rviz/pull/1288
 
 ## Usage
 
-Store the source code to your [ROS 2 workspace][ROS tutorial] and
-compile it with:
+Add the source code to a [ROS 2 workspace][ROS tutorial] and compile
+it with:
 
     colcon build
     source install/setup.bash
@@ -63,9 +68,10 @@ firewall.
 
 ### Streaming to Foxglove Studio
 
-If you install [foxglove_compressed_video_transport][], you can stream
-hardware-accelerated video directly to Foxglove. The following
-parameters give good results for me with an NVIDIA GPU:
+If you install [foxglove_compressed_video_transport][] (at least
+version 1.0.2 is needed), you can stream hardware-accelerated video
+directly to Foxglove. The following parameters give good results for
+me with an NVIDIA GPU:
 
     ros2 run carla_camera_publisher carla_camera_publisher localhost 2000 --ros-args \
         -p width:=1920 -p height:=1080 \
@@ -81,6 +87,10 @@ To see the video in Foxglove run:
 and connect Foxglove to `ws://localhost:8765`.
 
 ## Example
+
+Comparison of camera visualization from CARLA running on a remote host
+(left: this project + Foxglove; right: native CARLA protocol). The
+video also shows changing of camera position via ROS parameters.
 
 https://github.com/user-attachments/assets/be466116-8fb5-4e0b-b9a9-a912821238a6
 
