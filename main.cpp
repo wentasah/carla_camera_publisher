@@ -179,12 +179,12 @@ int main(int argc, const char *argv[])
                 goto create_camera;
             }
         } catch (const cc::TimeoutException &e) {
-            fmt::println("{}", e.what());
+            fmt::println(stderr, "{}", e.what());
             if (ros_running)
                 goto reconnect;
         }
     } catch (const std::exception &e) {
-        fmt::println("\nException: {}", e.what());
+        fmt::println(stderr, "\nException: {}", e.what());
         return 2;
     }
     fmt::println(stderr, "Terminating");
