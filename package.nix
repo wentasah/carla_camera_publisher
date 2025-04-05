@@ -4,7 +4,7 @@ buildRosPackage rec {
   pname = "carla-camera-publisher";
   version = "0.0.0";
 
-  src = ./.;
+  src = lib.sourceByRegex ./. [".*\.[ch]pp$" "^CMakeLists.txt$" "package.xml"];
 
   buildType = "ament_cmake";
   buildInputs = [ ament-cmake fmt libcarla-client libjpeg libpng tf2 tf2-ros ];
