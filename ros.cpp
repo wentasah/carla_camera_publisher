@@ -96,7 +96,7 @@ public:
         t.child_frame_id = frame_id;
 
         t.transform.translation.x = params_for_tf.position[0];
-        t.transform.translation.y = params_for_tf.position[1];
+        t.transform.translation.y = -params_for_tf.position[1];
         t.transform.translation.z = params_for_tf.position[2];
         tf2::Quaternion quat, quat_swap;
         quat.setRPY(params_for_tf.orientation[2] / 180.0 * M_PI,
