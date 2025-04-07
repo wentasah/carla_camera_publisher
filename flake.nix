@@ -37,6 +37,9 @@
               runtimeInputs = [
                 (with pkgs.rosPackages.${rosDistro}; buildEnv {
                   paths = [
+                    compressed-image-transport
+                    ffmpeg-image-transport
+                    foxglove-compressed-video-transport
                     ros2run
                     self.defaultPackage.${system}
                   ];
