@@ -1,7 +1,7 @@
 
 {
   inputs = {
-    nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/master";
+    nix-ros-overlay.url = "github:lopsided98/nix-ros-overlay/develop";
     nixpkgs.follows = "nix-ros-overlay/nixpkgs";  # IMPORTANT!!!
     carla = { url = "github:CTU-IIG/carla-simulator.nix"; inputs.nixpkgs.follows = "nix-ros-overlay/nixpkgs"; };
   };
@@ -75,9 +75,9 @@
             # ... other non-ROS packages
             (with pkgs.rosPackages.${rosDistro}; buildEnv {
               paths = [
-                (callPackage ./nix/foxglove-compressed-video-transport.nix { })
                 compressed-image-transport
                 ffmpeg-image-transport
+                foxglove-compressed-video-transport
                 ros-core
               ];
             })
