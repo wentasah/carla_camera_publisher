@@ -66,6 +66,13 @@ If `ros2 node list` doesn't show `carla_camera_publisher`, try running
 `ros2 daemon stop` and ensure that the ROS traffic is not blocked by a
 firewall.
 
+### Using with nix
+
+If you use nix, instead of installing ROS and building the node with
+`colcon`, you can build and run the node with the following command:
+
+    nix run github:wentasah/carla_camera_publisher -- localhost 2000
+
 ### ROS parameters
 
 ROS parameters and their default values are listed below:

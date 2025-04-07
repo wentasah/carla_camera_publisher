@@ -28,7 +28,25 @@
         };
         rosDistro = "jazzy";
       in {
-        apps.default = { type = "app"; program = "${self.defaultPackage.${system}}/lib/carla_camera_publisher/carla_camera_publisher"; };
+        apps.default = {
+          type = "app";
+          meta.description = "Run carla_camera_publisher compiled against ROS ${rosDistro}.";
+          program = let
+            wrapper = pkgs.writeShellApplication {
+              name = "carla-camera-publisher-wrapper";
+              runtimeInputs = [
+                (with pkgs.rosPackages.${rosDistro}; buildEnv {
+                  paths = [
+                    ros2run
+                    self.defaultPackage.${system}
+                  ];
+                })
+              ];
+              text = ''ros2 run carla_camera_publisher carla_camera_publisher "$@"'';
+            };
+          in
+            "${wrapper}/bin/carla-camera-publisher-wrapper";
+        };
         packages = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro} // {
           dump-parameters = pkgs.writeShellApplication {
             name = "dump-parameters";
