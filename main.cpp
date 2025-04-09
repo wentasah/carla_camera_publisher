@@ -51,14 +51,28 @@ static auto &RandomChoice(const RangeT &range, RNG &&generator) {
 static auto ParseArguments(int argc, const char *argv[]) {
     EXPECT_TRUE((argc == 1) || (argc >= 3));
     using ResultType = std::tuple<std::string, uint16_t>;
-    return argc >= 3 ?
-        ResultType{argv[1u], std::stoi(argv[2u])} :
-        ResultType{"localhost", 2000u};
+    if (argc >= 3) {
+        unsigned port;
+        try {
+            port = std::stoi(argv[2u]);
+        }
+        catch (const std::exception &e)             {
+            fmt::println(stderr, "Error: Cannot parse port argument: {}", argv[2u]);
+            std::exit(1);
+        }
+        return ResultType{argv[1u], port};
+    } else {
+        return ResultType{"localhost", 2000u};
+    }
 }
 
 int main(int argc, const char *argv[])
 {
     try {
+        std::string host;
+        uint16_t port;
+        std::tie(host, port) = ParseArguments(argc, argv);
+
         ros_init(argc, argv);
 
         Params params = ros_wait_new_params(0).value();
@@ -71,10 +85,6 @@ int main(int argc, const char *argv[])
             ros_running = false;
         });
         ros_thread.detach();
-
-        std::string host;
-        uint16_t port;
-        std::tie(host, port) = ParseArguments(argc, argv);
 
         std::mt19937_64 rng((std::random_device())());
 
