@@ -41,7 +41,7 @@
                     ffmpeg-image-transport
                     foxglove-compressed-video-transport
                     ros2run
-                    self.defaultPackage.${system}
+                    self.packages.${system}.default
                   ];
                 })
               ];
@@ -51,6 +51,7 @@
             "${wrapper}/bin/carla-camera-publisher-wrapper";
         };
         packages = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro} // {
+          default = self.packages.${system}.carla-camera-publisher;
           dump-parameters = pkgs.writeShellApplication {
             name = "dump-parameters";
             runtimeInputs = with pkgs; [
@@ -60,7 +61,7 @@
             text = ''
               set -x
               (
-                  ${self.defaultPackage.${system}}/lib/carla_camera_publisher/carla_camera_publisher > /dev/null &
+                  ${self.packages.${system}.default}/lib/carla_camera_publisher/carla_camera_publisher > /dev/null &
                   ros2 param dump --no-daemon /carla_camera_publisher
                   kill $!
                   wait
@@ -68,7 +69,6 @@
             '';
           };
         };
-        defaultPackage = self.packages.${system}.carla-camera-publisher;
         checks = builtins.intersectAttrs (import ./overlay.nix null null) pkgs.rosPackages.${rosDistro};
         devShells.default = pkgs.mkShell {
           name = "CARLA camera publisher";
