@@ -49,7 +49,11 @@ static auto &RandomChoice(const RangeT &range, RNG &&generator) {
 }
 
 static auto ParseArguments(int argc, const char *argv[]) {
-    EXPECT_TRUE((argc == 1) || (argc >= 3));
+    if (!((argc == 1) || (argc >= 3))) {
+        fmt::println(stderr, "Usage: carla_camera_publisher");
+        fmt::println(stderr, "       carla_camera_publisher carla_host carla_port [ --ros-args ... ]");
+        std::exit(1);
+    }
     using ResultType = std::tuple<std::string, uint16_t>;
     if (argc >= 3) {
         unsigned port;
