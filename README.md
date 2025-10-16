@@ -108,7 +108,8 @@ me with an NVIDIA GPU:
     ros2 run carla_camera_publisher carla_camera_publisher localhost 2000 --ros-args \
         -p width:=1920 -p height:=1080 \
         -p carla_camera_publisher.camera.foxglove.encoding:=h264_nvenc \
-        -p carla_camera_publisher.camera.foxglove.preset:=ll \
+        -p carla_camera_publisher.camera.foxglove.preset:=p4 \
+        -p carla_camera_publisher.camera.foxglove.tune:=ll \
         -p carla_camera_publisher.camera.foxglove.bit_rate:=30000000
 
 To see the video in Foxglove run:
