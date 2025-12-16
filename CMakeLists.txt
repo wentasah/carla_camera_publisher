@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.10)
 project(carla_camera_publisher)
 
 set(CMAKE_BUILD_TYPE RelWithDebInfo)
