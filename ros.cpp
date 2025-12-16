@@ -45,10 +45,9 @@ public:
         range.set__from_value(0.0).set__to_value(100);
         this->declare_parameter("sensor_tick", 1.0/25.0, ParameterDescriptor{}.set__description("Frame rate [1/s]").set__floating_point_range({range}));
         this->declare_parameter("ego_vehicle_role_name", "ego_vehicle", ParameterDescriptor{}.set__description("Ego vehicle role name"));
-        range.set__from_value(-100.0).set__to_value(+100);
-        this->declare_parameter("position.x", 0.0, ParameterDescriptor{}.set__description("x").set__floating_point_range({range}));
-        this->declare_parameter("position.y", 0.0, ParameterDescriptor{}.set__description("y").set__floating_point_range({range}));
-        this->declare_parameter("position.z", 2.0, ParameterDescriptor{}.set__description("z").set__floating_point_range({range}));
+        this->declare_parameter("position.x", 0.0);
+        this->declare_parameter("position.y", 0.0);
+        this->declare_parameter("position.z", 2.0);
         range.set__from_value(-180.0).set__to_value(+180.0);
         this->declare_parameter("orientation.pitch", -10.0, ParameterDescriptor{}.set__description("pitch").set__floating_point_range({range}));
         this->declare_parameter("orientation.yaw", 0.0, ParameterDescriptor{}.set__description("yaw").set__floating_point_range({range}));
