@@ -154,7 +154,9 @@ int main(int argc, const char *argv[])
 
             // Spawn a camera attached to the vehicle.
             auto camera_transform = cg::Transform {
-                cg::Location{params.position[0], params.position[1], params.position[2]}, // x, y, z.
+                cg::Location{params.position[0], -params.position[1], params.position[2]}, // x, y, z.
+                // TODO: Convert orientation from CARLA coordinates to
+                // ROS coordinates and also adjust /tf broadcast.
                 cg::Rotation{params.orientation[0], params.orientation[1], params.orientation[2]} }; // pitch, yaw, roll.
             auto cam_actor = world.SpawnActor(*camera_bp, camera_transform,
                                               params.attach_to_ego ? ego_vehicle.get() : nullptr);
