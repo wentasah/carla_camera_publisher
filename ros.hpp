@@ -11,6 +11,7 @@ struct Params {
 	std::string ego_vehicle_role_name;
         std::array<float, 3> position;
         std::array<float, 3> orientation;
+        bool attach_to_ego;
 };
 
 void ros_init(int argc, const char *argv[]);

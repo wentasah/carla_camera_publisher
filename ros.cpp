@@ -53,6 +53,7 @@ public:
         this->declare_parameter("orientation.pitch", -10.0, ParameterDescriptor{}.set__description("pitch").set__floating_point_range({range}));
         this->declare_parameter("orientation.yaw", 0.0, ParameterDescriptor{}.set__description("yaw").set__floating_point_range({range}));
         this->declare_parameter("orientation.roll", 0.0, ParameterDescriptor{}.set__description("roll").set__floating_point_range({range}));
+        this->declare_parameter("attach_to_ego", true);
 
         tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -92,7 +93,7 @@ public:
         last_stamp = stamp;
 
         t.header.stamp = stamp;
-        t.header.frame_id = params.ego_vehicle_role_name;
+        t.header.frame_id = params_for_tf.attach_to_ego ? params.ego_vehicle_role_name : "map";
         t.child_frame_id = frame_id;
 
         t.transform.translation.x = params_for_tf.position[0];
@@ -147,6 +148,7 @@ public:
         params.orientation[0] = static_cast<float>(get_parameter("orientation.pitch").as_double());
         params.orientation[1] = static_cast<float>(get_parameter("orientation.yaw").as_double());
         params.orientation[2] = static_cast<float>(get_parameter("orientation.roll").as_double());
+        params.attach_to_ego = this->get_parameter("attach_to_ego").as_bool();
     }
 
 };

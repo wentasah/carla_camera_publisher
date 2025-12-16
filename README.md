@@ -80,6 +80,7 @@ ROS parameters and their default values are listed below:
 <!-- `$ nix run .#dump-parameters` as yaml -->
 
 ```yaml
+attach_to_ego: true
 ego_vehicle_role_name: ego_vehicle
 fov: 110.0
 frame_id: carla_camera
