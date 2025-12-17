@@ -45,14 +45,14 @@ public:
         range.set__from_value(0.0).set__to_value(100);
         this->declare_parameter("sensor_tick", 1.0/25.0, ParameterDescriptor{}.set__description("Frame rate [1/s]").set__floating_point_range({range}));
         this->declare_parameter("ego_vehicle_role_name", "ego_vehicle", ParameterDescriptor{}.set__description("Ego vehicle role name"));
-        range.set__from_value(-100.0).set__to_value(+100);
-        this->declare_parameter("position.x", 0.0, ParameterDescriptor{}.set__description("x").set__floating_point_range({range}));
-        this->declare_parameter("position.y", 0.0, ParameterDescriptor{}.set__description("y").set__floating_point_range({range}));
-        this->declare_parameter("position.z", 2.0, ParameterDescriptor{}.set__description("z").set__floating_point_range({range}));
+        this->declare_parameter("position.x", 0.0);
+        this->declare_parameter("position.y", 0.0);
+        this->declare_parameter("position.z", 2.0);
         range.set__from_value(-180.0).set__to_value(+180.0);
         this->declare_parameter("orientation.pitch", -10.0, ParameterDescriptor{}.set__description("pitch").set__floating_point_range({range}));
         this->declare_parameter("orientation.yaw", 0.0, ParameterDescriptor{}.set__description("yaw").set__floating_point_range({range}));
         this->declare_parameter("orientation.roll", 0.0, ParameterDescriptor{}.set__description("roll").set__floating_point_range({range}));
+        this->declare_parameter("attach_to_ego", true);
 
         tf_broadcaster_ = std::make_shared<tf2_ros::StaticTransformBroadcaster>(this);
 
@@ -92,11 +92,11 @@ public:
         last_stamp = stamp;
 
         t.header.stamp = stamp;
-        t.header.frame_id = params.ego_vehicle_role_name;
+        t.header.frame_id = params_for_tf.attach_to_ego ? params.ego_vehicle_role_name : "map";
         t.child_frame_id = frame_id;
 
         t.transform.translation.x = params_for_tf.position[0];
-        t.transform.translation.y = -params_for_tf.position[1];
+        t.transform.translation.y = params_for_tf.position[1];
         t.transform.translation.z = params_for_tf.position[2];
         tf2::Quaternion quat, quat_swap;
         quat.setRPY(params_for_tf.orientation[2] / 180.0 * M_PI,
@@ -147,6 +147,7 @@ public:
         params.orientation[0] = static_cast<float>(get_parameter("orientation.pitch").as_double());
         params.orientation[1] = static_cast<float>(get_parameter("orientation.yaw").as_double());
         params.orientation[2] = static_cast<float>(get_parameter("orientation.roll").as_double());
+        params.attach_to_ego = this->get_parameter("attach_to_ego").as_bool();
     }
 
 };

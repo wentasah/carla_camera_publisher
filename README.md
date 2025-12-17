@@ -80,6 +80,7 @@ ROS parameters and their default values are listed below:
 <!-- `$ nix run .#dump-parameters` as yaml -->
 
 ```yaml
+attach_to_ego: true
 ego_vehicle_role_name: ego_vehicle
 fov: 110.0
 frame_id: carla_camera
@@ -119,6 +120,33 @@ To see the video in Foxglove run:
 
 and connect Foxglove to `ws://localhost:8765`.
 
+## Recording real-time video
+
+You can use `carla_camera_publisher` to produce a real-time video even
+in your simulation does not run in real-time, i.e. it runs slower or
+faster. This can be achieved by installing ROS packages
+[ffmpeg_image_transport][] and [ffmpeg_image_transport_tools][] and
+running the following commands (assuming you have an NVIDIA GPU for
+video encoding):
+
+    ros2 run carla_camera_publisher carla_camera_publisher localhost 2000 --ros-args \
+        -p width:=1920 -p height:=1080 \
+        -p carla_camera_publisher.camera.ffmpeg.encoding:=h264_nvenc \
+        -p carla_camera_publisher.camera.ffmpeg.preset:=p4 \
+        -p carla_camera_publisher.camera.ffmpeg.tune:=ll \
+        -p carla_camera_publisher.camera.ffmpeg.bit_rate:=30000000
+
+Record the compressed video to a ROS bag:
+
+    ros2 bag record --topics /carla_camera_publisher/camera/ffmpeg --use-sim-time -o video-bag
+
+Extract the video from the ROS bag to `video.mp4`:
+
+    ros2 run ffmpeg_image_transport_tools bag_to_file -t /carla_camera_publisher/camera/ffmpeg -r 50 -i video-bag/ -o video
+
+Note that we run CARLA with fixed frame rate of 20 ms so we set the
+video rate with `-r` to 50 Hz.
+
 ## Example
 
 Comparison of camera visualization from CARLA running on a remote host
@@ -128,6 +156,7 @@ video also shows changing of camera position via ROS parameters.
 https://github.com/user-attachments/assets/be466116-8fb5-4e0b-b9a9-a912821238a6
 
 [ffmpeg_image_transport]: https://github.com/ros-misc-utilities/ffmpeg_image_transport/
+[ffmpeg_image_transport_tools]: https://github.com/ros-misc-utilities/ffmpeg_image_transport_tools/
 [foxglove_compressed_video_transport]: https://github.com/ros-misc-utilities/foxglove_compressed_video_transport/
 [image_transport]: https://wiki.ros.org/image_transport
 [ROS tutorial]: https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Colcon-Tutorial.html
